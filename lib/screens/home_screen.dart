@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/task_provider.dart';
+import 'add_task_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -8,68 +9,31 @@ class HomeScreen extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descController = TextEditingController();
 
-  void showAddTaskDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text("Add New Task"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  hintText: "Enter task name",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: descController,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  hintText: "Enter description",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (nameController.text.isNotEmpty) {
-                  context.read<TaskProvider>().addTask(
-                    nameController.text,
-                    descController.text,
-                  );
-
-                  nameController.clear();
-                  descController.clear();
-                  Navigator.pop(dialogContext);
-                }
-              },
-              child: const Text("Add"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<TaskProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Task Manager"), centerTitle: true),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => showAddTaskDialog(context),
-        child: const Icon(Icons.add),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.lightBlue,
+        title: const Text(
+          "Task Manager",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddTaskScreen()),
+          );
+        },
+        icon: const Icon(Icons.add),
+        label: const Text("Add Task"),
+        backgroundColor: Colors.lightBlue,
+        foregroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -140,13 +104,16 @@ class HomeScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
             Expanded(
               child: ListView.builder(
                 itemCount: provider.tasks.length,
                 itemBuilder: (context, index) {
                   final task = provider.tasks[index];
                   return Card(
+                    color: task.isCompleted
+                        ? Colors.green.shade100
+                        : Colors.orange.shade100,
                     margin: const EdgeInsets.only(bottom: 12),
                     elevation: 4,
                     shape: RoundedRectangleBorder(
@@ -173,9 +140,6 @@ class HomeScreen extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      decoration: task.isCompleted
-                                          ? TextDecoration.lineThrough
-                                          : null,
                                     ),
                                   ),
 
