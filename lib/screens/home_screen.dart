@@ -109,15 +109,21 @@ class HomeScreen extends StatelessWidget {
                   final task = provider.tasks[index];
 
                   return ListTile(
-                    leading: Checkbox(
-                      value: task.isCompleted,
-                      onChanged: (_) => provider.toggleTask(index),
-                    ),
                     title: Text(task.name),
                     subtitle: Text(task.description),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () => provider.deleteTask(index),
+
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Checkbox(
+                          value: task.isCompleted,
+                          onChanged: (_) => provider.toggleTask(index),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => provider.deleteTask(index),
+                        ),
+                      ],
                     ),
                   );
                 },
