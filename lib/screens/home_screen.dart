@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:taskmanager/providers/theme_provider.dart';
+
 import '../providers/task_provider.dart';
 import 'add_task_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
 
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController descController = TextEditingController();
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController nameController = TextEditingController();
+
+  final TextEditingController descController = TextEditingController();
+  bool isDark = false;
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<TaskProvider>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.watch<ThemeProvider>().scaffoldColor,
       appBar: AppBar(
         backgroundColor: Colors.lightBlue,
         title: const Text(
@@ -22,6 +30,18 @@ class HomeScreen extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(
+              context.watch<ThemeProvider>().isDark
+                  ? Icons.dark_mode
+                  : Icons.light_mode,
+            ),
+            onPressed: () {
+              context.read<ThemeProvider>().toggleTheme();
+            },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -45,7 +65,38 @@ class HomeScreen extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.orange.shade100,
+                      color: const Color.fromARGB(255, 50, 181, 241),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Total",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          provider.totalTasks.toString(),
+                          style: const TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 253, 97, 86),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Column(
@@ -64,7 +115,7 @@ class HomeScreen extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Colors.orange,
+                            color: Colors.white,
                           ),
                         ),
                       ],
@@ -76,7 +127,7 @@ class HomeScreen extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.green.shade100,
+                      color: const Color.fromARGB(255, 95, 235, 100),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Column(
@@ -88,13 +139,13 @@ class HomeScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-
+                        const SizedBox(height: 8),
                         Text(
                           provider.completedTasks.toString(),
                           style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Colors.green,
+                            color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -102,6 +153,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(width: 12),
               ],
             ),
             const SizedBox(height: 30),
@@ -112,8 +164,8 @@ class HomeScreen extends StatelessWidget {
                   final task = provider.tasks[index];
                   return Card(
                     color: task.isCompleted
-                        ? Colors.green.shade100
-                        : Colors.orange.shade100,
+                        ? const Color.fromARGB(255, 95, 235, 100)
+                        : const Color.fromARGB(255, 253, 97, 86),
                     margin: const EdgeInsets.only(bottom: 12),
                     elevation: 4,
                     shape: RoundedRectangleBorder(
@@ -158,10 +210,14 @@ class HomeScreen extends StatelessWidget {
                             Checkbox(
                               value: task.isCompleted,
                               onChanged: (_) => provider.toggleTask(index),
+                              activeColor: Colors.lightBlue,
                             ),
 
                             IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.lightBlue,
+                              ),
                               onPressed: () => provider.deleteTask(index),
                             ),
                           ],

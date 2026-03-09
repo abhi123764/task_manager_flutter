@@ -20,31 +20,33 @@ class TaskProvider extends ChangeNotifier {
         isCompleted: true,
       ),
     ]);
+    
   }
+ 
 
   List<Task> get tasks => _tasks;
 
-  // ADD TASK
+  // ADD
   void addTask(String name, String description) {
     _tasks.add(Task(name: name, description: description));
     notifyListeners();
   }
 
-  // TOGGLE TASK
+  // TOGGLE
   void toggleTask(int index) {
     _tasks[index].isCompleted = !_tasks[index].isCompleted;
     notifyListeners();
   }
 
-  // DELETE TASK
+  // DELETE
   void deleteTask(int index) {
     _tasks.removeAt(index);
     notifyListeners();
   }
 
-  // TOTAL COUNT
+  // TOTAL
   int get totalTasks => _tasks.length;
 
-  // COMPLETED COUNT
+  // COMPLETED
   int get completedTasks => _tasks.where((task) => task.isCompleted).length;
 }
