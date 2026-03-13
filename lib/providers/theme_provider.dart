@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  bool isDark = false;
-
-  Color get scaffoldColor => isDark ? Colors.black : Colors.white;
+  bool _isDark = false;
+  bool get isDark => _isDark;
 
   void toggleTheme() {
-    isDark = !isDark;
+    _isDark = !isDark;
     notifyListeners();
   }
+
+  Color get scaffoldColor => isDark ? Colors.black : Colors.white;
 }
